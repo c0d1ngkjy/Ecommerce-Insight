@@ -1,60 +1,64 @@
 <template>
-  <q-page class="flex flex-center q-pa-sm">
-    <q-card class="fit">
-      <q-card-section  class="fit">Musinsa.com</q-card-section>
-      <q-card-section class="fit">
-        <div  class="fit" id="chart"></div>
+  <q-page class="q-pa-sm column content-center justify-center">
+    <q-card class="">
+      <q-inner-loading :showing="loading" color="primary"></q-inner-loading>
+      <q-card-section class="">
+        <div id="chart" />
       </q-card-section>
     </q-card>
+    <div class="text-caption text-grey fixed-bottom text-center">@all rights reserved codingkjy@gmail.com</div>
   </q-page>
 </template>
 
 <script>
 import { defineComponent, onMounted, ref } from 'vue'
 import { getProducts } from 'src/services/products';
-import * as d3 from 'd3';
+import Plotly from 'plotly.js-dist';
 
 export default defineComponent({
   name: 'IndexPage',
   setup() {
     const products = ref([]);
+    const loading = ref()
 
     async function getDataFromFB() {
-      products.value = await getProducts();
-      console.log(products.value);
+      loading.value = true
+      const products = await getProducts();
+      console.log(products);
 
-      // Basic D3.js visualization
-      const svg = d3.select('#chart')
-        .append('svg')
-        .attr('width', '90%')
-        .attr('height',400);
+      const data = [{
+        x: products.map(p => p.name),
+        y: products.map(p => p.price / 10000),
+        type: 'bar',
+        marker: {
+          color: 'rgb(87,41,206)'
+        },
+      }];
 
-      svg.selectAll('rect')
-        .data(products.value)
-        .enter()
-        .append('rect')
-        .attr('x', (d, i) => i * 70)
-        .attr('y', (d) => 300 - Number(d.price) / 10000)
-        .attr('width', 65)
-        .attr('height', (d) => Number(d.price) / 10000)
-        .attr('fill', 'skyblue');
+      const layout = {
+        title: 'Musinsa Product Prices',
+        xaxis: {
+          tickangle: -45
+        },
+        yaxis: {
+          title: '가격(만원)'
+        }
+      };
 
-        svg.selectAll('text')
-        .data(products.value)
-        .enter()
-        .append('text')
-        .text((d) => d.name)
-        .attr('x', (d, i) => i * 70 + 32.5)
-        .attr('y', (d) => 300 - d.price / 10000 - 5)
-        .attr('text-anchor', 'middle')
-        .attr('font-size', '10px')
-        .attr('fill', 'black');
+      //displaymodebar : tgg plotly actions bar on top of chart
+      Plotly.newPlot('chart', data, layout, { displayModeBar: false });
+      loading.value = false
     }
+
 
 
     onMounted(() => {
       getDataFromFB()
     })
+
+    return {
+      loading
+    }
   }
 })
 </script>
