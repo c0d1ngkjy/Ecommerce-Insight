@@ -4,7 +4,7 @@ import { db } from "boot/firebase";
 export const getProducts = async () => {
   const products = [];
 
-  const productsSnapshot = await getDocs(collection(db, 'products'));
+  const productsSnapshot = await getDocs(collection(db, 'shirt&&blouse'));
   productsSnapshot.forEach((doc) => {
     products.push({
       id: doc.id,

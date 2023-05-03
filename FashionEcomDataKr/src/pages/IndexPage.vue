@@ -28,7 +28,7 @@ export default defineComponent({
 
       const data = [{
         x: products.map(p => p.name),
-        y: products.map(p => p.price / 10000),
+        y: products.map(p => p.price ),
         type: 'bar',
         marker: {
           color: 'rgb(87,41,206)'
@@ -36,12 +36,12 @@ export default defineComponent({
       }];
 
       const layout = {
-        title: 'Musinsa Product Prices',
+        title: 'Musinsa Avg Product Prices By Category',
         xaxis: {
           tickangle: -45
         },
         yaxis: {
-          title: '가격(만원)'
+          title: '10000₩'
         }
       };
 

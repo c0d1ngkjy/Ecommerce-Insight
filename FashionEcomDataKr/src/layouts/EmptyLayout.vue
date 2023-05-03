@@ -2,8 +2,8 @@
   <q-layout view="hHh lpR fFf">
 
     <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>
+      <q-toolbar >
+        <q-toolbar-title class="row items-center justify-center">
           <q-icon name="bar_chart" />
           FashionEcomDataKr
         </q-toolbar-title>

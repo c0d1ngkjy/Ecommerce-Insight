@@ -20,7 +20,7 @@ async function scrapeTopSellingProducts() {
     headless: "new"
   });
   const page = await browser.newPage();
-  await page.goto("https://www.musinsa.com/ranking/best");
+  await page.goto("https://www.musinsa.com/categories/item/001002?d_cat_cd=001002&brand=&list_kind=small&sort=sale_high&sub_sort=3m&page=1&display_cnt=90&group_sale=&exclusive_yn=&sale_goods=&timesale_yn=&ex_soldout=&kids=&color=&price1=&price2=&shoeSizeOption=&tags=&campaign_id=&includeKeywords=&measure=");
 
   // Wait for the page to fully load
   await page.waitForSelector('.li_box');
@@ -33,12 +33,18 @@ async function scrapeTopSellingProducts() {
     for (const element of productElements) {
       const product = {};
       product.name = element.querySelector('.list_info a').innerText.replace(/\[(.*?)\]/g, ''); // Remove [] and their contents
-      product.price = element.querySelector('.price').innerText.replace(/[^\d\n]/g, ''); // Remove non-digit characters except '\n'
-      
-      if (product.price.includes('\n')) { // If there are two prices separated by '\n', take the second one
-        product.price = product.price.split('\n')[1];
+      product.price = element.querySelector('.price').innerText;
+      const prices = product.price.split(' ');
+      if (prices.length >= 2) {
+        product.price = prices[1].replace('원', '');
+        product.price.replace(',', '');
+      } else {
+        product.price = prices[0].replace('원', '');
+        product.price.replace(',', '');
+
       }
 
+      
       productList.push(product);
     }
 
@@ -49,8 +55,8 @@ async function scrapeTopSellingProducts() {
 
   console.log(products);
 
-  // Save the scraped data to Firestore
-  const collectionRef = collection(db, 'products');
+  //Save the scraped data to Firestore
+  const collectionRef = collection(db, 'shirt&&blouse');
   
   products.forEach(async (product) => {
     const docRef = doc(collectionRef);
